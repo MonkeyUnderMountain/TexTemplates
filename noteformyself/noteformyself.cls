@@ -48,14 +48,33 @@
 %--------------------------------------------------------------------------
 % 页面布局配置
 %--------------------------------------------------------------------------
-\RequirePackage[a4paper,
-  top=1in,
-  bottom=0.5in,
-  left=.5in,
-  right=.5in,
-  includefoot,    % 包含页脚区域
-  footskip=0pt    % 首页页脚基线距离
-]{geometry}
+\makeatletter
+\edef\@sectionlevel{\noteformyself@sectionlevel}
+\RequirePackage{geometry}
+\ifdefstring{\@sectionlevel}{book}{%
+  % book模式页面设置
+  \geometry{
+    a4paper,
+    top=0.875in,
+    bottom=0.5in,
+    left=.5in,
+    right=.5in,
+    includefoot,
+    footskip=0pt
+  }
+}{%
+  % 其他模式页面设置
+  \geometry{
+    a4paper,
+    top=1in,
+    bottom=0.5in,
+    left=.5in,
+    right=.5in,
+    includefoot,
+    footskip=0pt
+  }
+}%
+\makeatother
 \renewcommand{\baselinestretch}{1.3}
 
 
@@ -74,7 +93,7 @@
 
 
 %--------------------------------------------------------------------------
-% 核心包加载（按功能分组，保持加载顺序）
+% 核心包加载
 %--------------------------------------------------------------------------
 % 基础功能包
 \RequirePackage{graphicx}       % 图形插入支持
@@ -85,9 +104,9 @@
 \RequirePackage[dvipsnames]{xcolor} % 颜色支持
 \RequirePackage[most]{tcolorbox} % 彩色盒子环境
 \RequirePackage{tikz}           % 矢量绘图
+\RequirePackage{pstricks-add}   % PSTricks扩展
 \RequirePackage{tikz-cd}        % 交换图绘制
 \RequirePackage[all]{xy}        % 交换图绘制
-\RequirePackage{enumitem}       % Required for custom labels
 \RequirePackage{mathtools}      % 数学工具包（提供多种数学环境和命令）
 
 % 中文支持
@@ -111,7 +130,6 @@
 % \setmathfont{Asana Math}[range=scr] % like scr, support lowercase
 % \setmathfont{Fira Math} % like sf, lack many fonts
 
-
 % 引用系统
 \RequirePackage[backend=biber,style=alphabetic,backref]{biblatex} % 参考文献管理
 
@@ -134,17 +152,16 @@
 
 
 %--------------------------------------------------------------------------
-% 文档元数据定义（支持封面页调用）
+% 文档元数据定义
 %--------------------------------------------------------------------------
 \makeatletter
-% 作者信息处理（支持封面页和脚注）
+% 作者信息处理
 \let\oldauthor\author
 \renewcommand{\author}[1]{%
   \oldauthor{#1}%
   \gdef\@author{#1}%
 }
 \gdef\@author{} % 初始化作者变量
-
 % 标题信息处理
 \let\oldtitle\title
 \renewcommand{\title}[1]{%
@@ -152,7 +169,6 @@
   \gdef\@title{#1}%
 }
 \gdef\@title{} % 初始化标题变量
-
 % 日期信息处理
 \let\olddate\date
 \renewcommand{\date}[1]{%
@@ -160,14 +176,11 @@
   \gdef\@date{#1}%
 }
 \gdef\@date{} % 初始化日期变量
-
 % 自定义封面元素
 \gdef\@authoremail{}     % 作者邮箱
 \newcommand{\authoremail}[1]{\gdef\@authoremail{#1}}
 \gdef\@authorpage{}     % 作者主页
 \newcommand{\authorpage}[1]{\gdef\@authorpage{#1}} 
-\gdef\@authorinfo{}     % 作者附加信息
-\newcommand{\authorinfo}[1]{\gdef\@authorinfo{#1}}
 \gdef\@coversentence{}  % 封面标语
 \newcommand{\coversentence}[1]{\gdef\@coversentence{#1}}
 \gdef\@coverimage{}     % 封面图片路径
@@ -180,8 +193,10 @@
 \newcommand{\covertextcolor}[1]{\gdef\@covertextcolor{#1}}
 \gdef\@texsource{} % TeX源代码路径
 \newcommand{\texsource}[1]{\gdef\@texsource{#1}}
-\gdef\@version{v 1.0.0} % 文档版本
+\gdef\@version{1.0.0} % 文档版本
 \newcommand{\version}[1]{\gdef\@version{#1}}
+\gdef\@copyrightyear{\number\year} % 版权声明
+\newcommand{\copyrightyear}[1]{\gdef\@copyrightyear{#1}}
 \makeatother
 
 
@@ -190,64 +205,17 @@
 %--------------------------------------------------------------------------
 % 页眉页脚样式配置
 %--------------------------------------------------------------------------
-% for section and book mode
+
+% 统一灰色页眉线命令
+\newcommand{\grayheadrule}{\color{gray}\hrule width \headwidth height \headrulewidth\vspace{-\headrulewidth}}
+
+% section/chapter模式
 \makeatletter
-\pagestyle{fancy}
-% 页眉样式
-\fancyhead[R]{%
-  \tikz[baseline=(char.base)]{
-    \node[shape=rectangle,fill=gray,text=white,inner sep=2pt] (char) {\thepage};
-  }%
-}
-\fancyhead[L]{\nouppercase{\@title}}
-\renewcommand{\headrule}{%
-  \vbox to 0pt{%
-    \color{gray}%
-    \hrule width \headwidth height \headrulewidth%
-    \vss%
-  }%
-}
-\renewcommand{\headrulewidth}{4pt}
-
-% 页脚样式（留空）
-\renewcommand{\footrule}{%
-  \vbox to -10pt{%
-    \color{gray}%
-    \hrule width \headwidth height \headrulewidth%
-    \vss%
-  }%
-}
-\fancyfoot{}
-\makeatother
-% for book mode, use a different style
-\makeatletter
-\fancypagestyle{mainmatterstyle}{ % 主体部分页眉页脚样式
-  \pagestyle{fancy}
-  % 页眉样式
-  \fancyhead[RO]{%
-    \tikz[baseline=(char.base)]{
-      \node[shape=rectangle,fill=gray,text=white,inner sep=2pt] (char) {\thepage};
-    }%
-  }
-  \fancyhead[LO]{\leftmark} % 左侧页眉显示章节标题
-
-  \fancyhead[LE]{%
-    \tikz[baseline=(char.base)]{
-      \node[shape=rectangle,fill=gray,text=white,inner sep=2pt] (char) {\thepage};
-    }%
-  }
-  \fancyhead[RE]{\rightmark} % 右侧页眉显示小节标题
-
-  \renewcommand{\headrule}{%
-    \vbox to 0pt{%
-      \color{gray}%
-      \hrule width \headwidth height \headrulewidth%
-      \vss%
-    }%
-  }
+\fancypagestyle{sectionmainmatter}{
+  \fancyhead[L]{\nouppercase{\@title}}
+  \fancyhead[R]{\tikz[baseline=(char.base)]{\node[rectangle,fill=gray,text=white,inner sep=2pt] (char) {\thepage};}}
   \renewcommand{\headrulewidth}{4pt}
-
-  % 页脚样式（留空）
+  \renewcommand{\headrule}{\grayheadrule}
   \renewcommand{\footrule}{%
     \vbox to -10pt{%
       \color{gray}%
@@ -257,6 +225,41 @@
   }
   \fancyfoot{}
 }
+\makeatother
+% book模式
+\fancypagestyle{bookmainmatter}{
+  \fancyhead[LO]{\leftmark}
+  \fancyhead[RO]{\tikz[baseline=(char.base)]{\node[rectangle,fill=gray,text=white,inner sep=2pt] (char) {\thepage};}}
+  \fancyhead[LE]{\tikz[baseline=(char.base)]{\node[rectangle,fill=gray,text=white,inner sep=2pt] (char) {\thepage};}}
+  \fancyhead[RE]{\rightmark}
+  \renewcommand{\headrulewidth}{4pt}
+  \renewcommand{\headrule}{\grayheadrule}
+  \renewcommand{\footrule}{%
+    \vbox to -10pt{%
+      \color{gray}%
+      \hrule width \headwidth height \headrulewidth%
+      \vss%
+    }%
+  }
+  \fancyfoot{}
+}
+\makeatletter
+% Redefine \leftmark and \rightmark for non-uppercase chapter/section names
+\ifdefstring{\@sectionlevel}{book}{%
+  \renewcommand{\chaptermark}[1]{%
+    \markboth{\thechapter.\ #1}{}
+  }
+  \renewcommand{\sectionmark}[1]{%
+    \markright{\thesection.\ #1}
+  }
+}{%
+}%
+% apply the mainmatter pagestyle
+\ifdefstring{\@sectionlevel}{book}{%
+  \pagestyle{bookmainmatter}
+}{%
+  \pagestyle{sectionmainmatter}
+}%
 \makeatother
 
 
@@ -268,22 +271,15 @@
 \makeatletter
 \renewcommand{\maketitle}{%
   \ifdefstring{\@sectionlevel}{book}{%
-    % Book模式, full page title (similar to chapter mode)
-    \newgeometry{%
-      top=.825in,
-      bottom=0.7in,
-      left=.5in,
-      right=.5in,
-      includefoot,
-      footskip=0pt
-    }
+    % --- Book模式: 全页封面 ---
+    \newgeometry{top=.575in, bottom=0.7in, left=.5in, right=.5in, includefoot, footskip=0pt}
     \begin{titlepage}
       \thispagestyle{fancy}
-      
-      % 封面装饰线配置
+      % 装饰线参数
       \gdef\biglineheight{10pt}
       \gdef\smalllineheight{4pt}
       \gdef\spaceheight{11pt}
+      % 页眉装饰线
       \renewcommand{\headrule}{%
         \vbox to 0pt{%
           \color{\@coverlinecolor}%
@@ -295,8 +291,7 @@
       }
       \renewcommand{\headrulewidth}{2mm}
       \fancyhead{}
-      
-      % 页脚装饰线配置
+      % 页脚装饰线
       \renewcommand{\footrule}{%
         \vbox to 0pt{%
           \color{\@coverlinecolor}%
@@ -307,8 +302,7 @@
         }%
       }
       \fancyfoot{}
-      
-      % 标题排版
+      % 标题
       \vspace*{1mm}
       \begin{flushleft}
         \begin{minipage}{0.8\textwidth}
@@ -317,59 +311,41 @@
           \textcolor{\@covertextcolor}{\@title}
         \end{minipage}
       \end{flushleft}
-      
-      % 封面图片
       % 封面图片
       \vfill
-      % \makeatletter
       \ifx\@coverimage\@empty
-        % 如果没有定义封面图片，显示警告
         \PackageWarning{noteformyself}{No cover image specified. Use \string\coverimage{filename} to add a cover image}%
         \begin{center}
-          \begin{minipage}{0.6\textwidth}
+          \fbox{\parbox{0.48\textwidth}{%
             \centering
-            \fbox{%
-              \begin{minipage}{0.8\textwidth}
-                \centering
-                \vspace{2cm}
-                \textcolor{gray}{\Large No Cover Image}\\[0.5cm]
-                \textcolor{gray}{\footnotesize Use \texttt{\textbackslash coverimage\{filename\}} to add an image}
-                \vspace{2cm}
-              \end{minipage}%
-            }
-          \end{minipage}
+            \vspace{2cm}
+            \textcolor{gray}{\Large No Cover Image}\\[0.5cm]
+            \textcolor{gray}{\footnotesize Use \texttt{\textbackslash coverimage\{filename\}} to add an image}
+            \vspace{2cm}
+          }}
         \end{center}
       \else
-        % 如果定义了封面图片，正常显示
         \IfFileExists{\@coverimage}{%
           \begin{figure}[ht]
             \centering
             \adjustimage{max width=0.6\textwidth, max height=0.4\textheight, keepaspectratio}{\@coverimage}
           \end{figure}
         }{%
-          % 图片文件不存在的警告
           \PackageError{noteformyself}{Cover image file '\@coverimage' not found}{%
             Please check that the file '\@coverimage' exists in your project directory.%
           }%
           \begin{center}
-            \begin{minipage}{0.6\textwidth}
+            \fbox{\parbox{0.48\textwidth}{%
               \centering
-              \fbox{%
-                \begin{minipage}{0.8\textwidth}
-                  \centering
-                  \vspace{2cm}
-                  \textcolor{red}{\Large Image Not Found}\\[0.5cm]
-                  \textcolor{red}{\footnotesize File '\@coverimage' does not exist}
-                  \vspace{2cm}
-                \end{minipage}%
-              }
-            \end{minipage}
+              \vspace{2cm}
+              \textcolor{red}{\Large Image Not Found}\\[0.5cm]
+              \textcolor{red}{\footnotesize File '\@coverimage' does not exist}
+              \vspace{2cm}
+            }}
           \end{center}
         }
       \fi
-    
-    
-      % 封面标语
+      % 标语
       \vspace{0.8cm}
       \begin{flushright}
         \begin{minipage}{0.8\textwidth}
@@ -378,43 +354,34 @@
           \end{flushright}
         \end{minipage}
       \end{flushright}
-      
       \vspace{0.8cm}
     \end{titlepage}
     \restoregeometry
     \clearpage
-
     % 信息页
     \thispagestyle{empty}
-      \vspace*{1cm}
-      \noindent {\Huge \textbf{\@title}}\\[0.5cm]
-      {\large \textbf{Author:} \@author}\\[0.5cm]
-      {\large \textbf{Email:} \@authoremail}\\[0.5cm]
-      {\large \textbf{Homepage:} \@authorpage}\\[0.5cm]
-      \vfill
-      \noindent {\large \textit{Source code: \@texsource}}\\[0.5cm]
-      {\large \textit{Version: \@version}}\\[0.5cm]
-      {\large \textit{Last updated: \today}}\\[0.5cm]
-      {\large \textit{Copyright © 2025 Tianle Yang}}
+    \noindent {\Huge \textbf{\@title}}\\[0.5cm]
+    {\large \textbf{Author:} \@author}\\[0.5cm]
+    {\large \textbf{Email:} \@authoremail}\\[0.5cm]
+    {\large \textbf{Homepage:} \@authorpage}\\[0.5cm]
+    \vfill
+    \noindent {\large \textit{Source code: \@texsource}}\\[0.5cm]
+    {\large \textit{Version: \@version}}\\[0.5cm]
+    {\large \textit{Last updated: \@date}}\\[0.5cm]
+    {\large \textit{Copyright © \@copyrightyear\ \@author}}
     \clearpage
+    \pagestyle{bookmainmatter}
   }{%
     \ifdefstring{\@sectionlevel}{chapter}{%
-      % Chapter模式, full page title
-      \newgeometry{%
-        top=.825in,
-        bottom=0.7in,
-        left=.5in,
-        right=.5in,
-        includefoot,
-        footskip=0pt
-      }
+      % --- Chapter模式: 全页封面 ---
+      \newgeometry{top=.7in, bottom=0.7in, left=.5in, right=.5in, includefoot, footskip=0pt}
       \begin{titlepage}
         \thispagestyle{fancy}
-        
-        % 封面装饰线配置
+        % 装饰线参数
         \gdef\biglineheight{10pt}
         \gdef\smalllineheight{4pt}
         \gdef\spaceheight{11pt}
+        % 页眉装饰线
         \renewcommand{\headrule}{%
           \vbox to 0pt{%
             \color{\@coverlinecolor}%
@@ -426,8 +393,7 @@
         }
         \renewcommand{\headrulewidth}{2mm}
         \fancyhead{}
-        
-        % 页脚装饰线配置
+        % 页脚装饰线
         \renewcommand{\footrule}{%
           \vbox to 0pt{%
             \color{\@coverlinecolor}%
@@ -438,8 +404,7 @@
           }%
         }
         \fancyfoot{}
-        
-        % 标题排版
+        % 标题
         \vspace*{1mm}
         \begin{flushleft}
           \begin{minipage}{0.8\textwidth}
@@ -448,94 +413,78 @@
             \textcolor{\@covertextcolor}{\@title}
           \end{minipage}
         \end{flushleft}
-        
-        % 封面图片
         % 封面图片
         \vfill
-        % \makeatletter
         \ifx\@coverimage\@empty
-          % 如果没有定义封面图片，显示警告
           \PackageWarning{noteformyself}{No cover image specified. Use \string\coverimage{filename} to add a cover image}%
           \begin{center}
-            \begin{minipage}{0.6\textwidth}
+            \fbox{\parbox{0.48\textwidth}{%
               \centering
-              \fbox{%
-                \begin{minipage}{0.8\textwidth}
-                  \centering
-                  \vspace{2cm}
-                  \textcolor{gray}{\Large No Cover Image}\\[0.5cm]
-                  \textcolor{gray}{\footnotesize Use \texttt{\textbackslash coverimage\{filename\}} to add an image}
-                  \vspace{2cm}
-                \end{minipage}%
-              }
-            \end{minipage}
+              \vspace{2cm}
+              \textcolor{gray}{\Large No Cover Image}\\[0.5cm]
+              \textcolor{gray}{\footnotesize Use \texttt{\textbackslash coverimage\{filename\}} to add an image}
+              \vspace{2cm}
+            }}
           \end{center}
         \else
-          % 如果定义了封面图片，正常显示
           \IfFileExists{\@coverimage}{%
             \begin{figure}[ht]
               \centering
               \adjustimage{max width=0.6\textwidth, max height=0.4\textheight, keepaspectratio}{\@coverimage}
             \end{figure}
           }{%
-            % 图片文件不存在的警告
             \PackageError{noteformyself}{Cover image file '\@coverimage' not found}{%
               Please check that the file '\@coverimage' exists in your project directory.%
             }%
             \begin{center}
-              \begin{minipage}{0.6\textwidth}
+              \fbox{\parbox{0.48\textwidth}{%
                 \centering
-                \fbox{%
-                  \begin{minipage}{0.8\textwidth}
-                    \centering
-                    \vspace{2cm}
-                    \textcolor{red}{\Large Image Not Found}\\[0.5cm]
-                    \textcolor{red}{\footnotesize File '\@coverimage' does not exist}
-                    \vspace{2cm}
-                  \end{minipage}%
-                }
-              \end{minipage}
+                \vspace{2cm}
+                \textcolor{red}{\Large Image Not Found}\\[0.5cm]
+                \textcolor{red}{\footnotesize File '\@coverimage' does not exist}
+                \vspace{2cm}
+              }}
             \end{center}
           }
         \fi
-      
-      
-        % 封面标语
+        % 标语
         \vspace{0.8cm}
         \begin{flushright}
           \begin{minipage}{0.8\textwidth}
-            \begin{flushright}
-              \large \textcolor{\@covertextcolor}{\@coversentence}
-            \end{flushright}
+            \large \textcolor{\@covertextcolor}{\@coversentence}
           \end{minipage}
         \end{flushright}
-        
         \vspace{0.8cm}
       \end{titlepage}
       \restoregeometry
       \clearpage
-
-      % 文档信息脚注
+      % 设置正文样式
+      \pagestyle{sectionmainmatter}
+      % 信息脚注
       \renewcommand{\thefootnote}{}
-      \footnotetext{\textbf{Date}: \@date,\ \textbf{Author}: \@author,\ \@authorinfo}
+      \noteformyself@footnotetext
       \renewcommand{\thefootnote}{\fnsymbol{footnote}}
     }{%
-      % Section模式（默认），简化封面
-      % 文档信息脚注
+      % --- Section模式: 简化封面 ---
+      \pagestyle{sectionmainmatter}
       \renewcommand{\thefootnote}{}
-      \footnotetext{\textbf{Date}: \@date,\ \textbf{Author}: \@author,\ \@authorinfo}
+      \noteformyself@footnotetext
       \renewcommand{\thefootnote}{\fnsymbol{footnote}}
     }%
   }%
+}
+% 封面脚注文本
+\newcommand{\noteformyself@footnotetext}{%
+  \footnotetext{\textbf{Date}: \@date,\ \textbf{Author}: \@author,\ \@authorpage}%
 }
 \makeatother
 
 
 
 
-%--------------------------------------------------------------------------
 % 列表环境配置
 %--------------------------------------------------------------------------
+\RequirePackage{enumitem}       % Required for custom labels
 \setlist[enumerate,1]{label=(\alph*)} % 第一层级：小写字母加括号 (a), (b), ...)
 \setlist[enumerate,2]{label=(\roman*)} % 第二层级：小写罗马数字加括号 (i), (ii), ...)
 
@@ -546,14 +495,13 @@
 % 章节标题格式配置
 %--------------------------------------------------------------------------
 \RequirePackage{titlesec}
-
 % 定义sectionlevel命令来控制章节级别
 \makeatletter
 \edef\@sectionlevel{\noteformyself@sectionlevel}
 \ifdefstring{\@sectionlevel}{book}{%
   % 书籍级别：book模式 
   \titleformat{\chapter}[display]
-    {\thispagestyle{mainmatterstyle}\normalfont\Huge\bfseries} % 标题样式
+    {\thispagestyle{bookmainmatter}\normalfont\Huge\bfseries} % 标题样式
     {\chaptertitlename\ \thechapter} % 章节编号格式
     {10pt} % 标题与编号间距
     {} % 标题前命令
@@ -605,6 +553,7 @@
     \newtheorem{definition}{Definition}
   }%
 }%
+\makeatother
 % Use \declaretheorem instead of \newtheorem for better cleveref support
 \declaretheorem[sibling=definition,name=Proposition]{proposition}
 \declaretheorem[sibling=definition,name=Def-Prop]{def-prop}
@@ -617,12 +566,11 @@
 \declaretheorem[sibling=definition,name=Claim]{claim}
 \declaretheorem[sibling=definition,name=Example]{example}
 \declaretheorem[sibling=definition,name=Exercise,style=definition]{exercise}
-\makeatother
 
 % 定义step子环境（在proof环境中使用，每个proof重置计数器）
 \newcounter{step}
 \newcounter{globalstep} % Global unique step counter for anchors
-% 简化的step环境，使用全局唯一计数器进行引用，但显示本地计数器
+% 使用全局唯一计数器globalstep进行引用，但显示本地计数器step的值
 \newenvironment{step}[1][]{%
   \refstepcounter{step}%
   \refstepcounter{globalstep}% This creates unique anchors
@@ -633,11 +581,12 @@
 }
 % 在proof环境开始时重置step计数器
 \AtBeginEnvironment{proof}{%
-  \setcounter{step}{0}%
+% Note: \theglobalstep displays the local step number for referencing,
+% not the global unique value. This may confuse users referencing steps globally.
+\renewcommand{\theglobalstep}{\arabic{step}}
 }
 % 重新定义globalstep的显示格式，让它显示为local step number
 \renewcommand{\theglobalstep}{\arabic{step}}
-
 
 % 设置cleveref引用格式
 \crefname{definition}{Definition}{Definitions}
@@ -654,186 +603,50 @@
 \crefname{claim}{Claim}{Claims}
 \crefname{globalstep}{Step}{Steps} % Global unique step counter
 
+% 定义有背景色的定理环境样式，应用于definition, proposition, theorem, lemma, corollary, conjecture, question
+\newcommand{\mybackgroundtcbsetup}[3]{%
+  \tcolorboxenvironment{#1}{
+    boxrule=0pt,
+    boxsep=0pt,
+    colback={#2!10},
+    left=8pt,
+    right=8pt,
+    enhanced jigsaw,
+    borderline west={2pt}{0pt}{#2},
+    sharp corners,
+    before skip=10pt,
+    after skip=10pt,
+    breakable,
+    #3
+  }
+}
+\mybackgroundtcbsetup{definition}{blue}{}
+\mybackgroundtcbsetup{proposition}{purple}{}
+\mybackgroundtcbsetup{theorem}{red}{}
+\mybackgroundtcbsetup{lemma}{orange}{}
+\mybackgroundtcbsetup{corollary}{magenta}{}
+\mybackgroundtcbsetup{conjecture}{violet}{}
+\mybackgroundtcbsetup{question}{Thistle}{}
 
-% 定理环境可视化配置（统一使用tcolorbox实现）
-% 定义环境配置（颜色方案：蓝色系）
-\tcolorboxenvironment{definition}{
-  boxrule=0pt,         % 边框粗细（0pt表示无外边框）
-  boxsep=0pt,          % 内容与边框间距
-  colback={blue!10},   % 背景颜色（蓝色10%透明度）
-  left=8pt,            % 左内边距
-  right=8pt,           % 右内边距
-  enhanced jigsaw,     % 启用高级边框绘制（解决某些兼容问题）
-  borderline west={2pt}{0pt}{blue}, % 左侧装饰线（2pt粗细，蓝色）
-  sharp corners,        % 直角边框（默认圆角）
-  before skip=10pt,    % 上方间距
-  after skip=10pt,     % 下方间距
-  breakable            % 允许跨页断行
+% 定义背景色的remark, example, claim, step, exercise环境样式
+\newcommand{\myemptybgtcdsetup}[3]{%
+  \tcolorboxenvironment{#1}{
+    boxrule=0pt,
+    boxsep=0pt,
+    blanker,             % 清除所有默认样式
+    borderline west={2pt}{0pt}{#2}, % 左侧线
+    left=8pt,
+    right=8pt,
+    sharp corners,
+    before skip=10pt,
+    after skip=10pt,
+    breakable,
+    before upper={\setlength{\parindent}{2em}},
+    #3
+  }
 }
-% 命题环境配置（颜色方案：紫色系）
-\tcolorboxenvironment{proposition}{
-  boxrule=0pt,
-  boxsep=0pt,
-  colback={purple!10}, % 背景色改为紫色10%透明度
-  left=8pt,
-  right=8pt,
-  enhanced jigsaw,
-  borderline west={2pt}{0pt}{purple}, % 左侧装饰线改为紫色
-  sharp corners,
-  before skip=10pt,
-  after skip=10pt,
-  breakable
-}
-% 定理环境配置（颜色方案：红色系）
-\tcolorboxenvironment{theorem}{
-  boxrule=0pt,
-  boxsep=0pt,
-  colback={red!10},    % 背景色改为红色10%透明度
-  left=8pt,
-  right=8pt,
-  enhanced jigsaw,
-  borderline west={2pt}{0pt}{red},    % 左侧装饰线改为红色
-  sharp corners,
-  before skip=10pt,
-  after skip=10pt,
-  breakable
-}
-% 引理环境配置（颜色方案：品红系）
-\tcolorboxenvironment{lemma}{
-  boxrule=0pt,
-  boxsep=0pt,
-  colback={magenta!10},% 背景色改为品红10%透明度
-  left=8pt,
-  right=8pt,
-  enhanced jigsaw,
-  borderline west={2pt}{0pt}{magenta},% 左侧装饰线改为品红
-  sharp corners,
-  before skip=10pt,
-  after skip=10pt,
-  breakable
-}
-% 推论环境配置（颜色方案：橙色系）
-\tcolorboxenvironment{corollary}{
-  boxrule=0pt,
-  boxsep=0pt,
-  colback={orange!10}, % 背景色改为橙色10%透明度
-  left=8pt,
-  right=8pt,
-  enhanced jigsaw,
-  borderline west={2pt}{0pt}{orange}, % 左侧装饰线改为橙色
-  sharp corners,
-  before skip=10pt,
-  after skip=10pt,
-  breakable
-}
-% 猜想环境配置（颜色方案：violet）
-\tcolorboxenvironment{conjecture}{
-  boxrule=0pt,
-  boxsep=0pt,
-  colback={violet!10},   % 背景颜色（violet10%透明度）
-  left=8pt,              % 左内边距
-  right=8pt,             % 右内边距
-  enhanced jigsaw,       % 启用高级边框绘制（解决某些兼容问题）
-  borderline west={2pt}{0pt}{violet}, % 左侧装饰线（2pt粗细，violet）
-  sharp corners,         % 直角边框（默认圆角）
-  before skip=10pt,      % 上方间距
-  after skip=10pt,       % 下方间距
-  breakable              % 允许跨页断行
-}
-% 问题环境配置（颜色方案：Thistle）
-\tcolorboxenvironment{question}{
-  boxrule=0pt,
-  boxsep=0pt,
-  colback={Thistle!10}, % 背景色改为Thistle10%透明度
-  left=8pt,
-  right=8pt,
-  enhanced jigsaw,
-  borderline west={2pt}{0pt}{Thistle}, % 左侧装饰线改为Thistle
-  sharp corners,
-  before skip=10pt,
-  after skip=10pt,
-  breakable
-}
-% 证明环境配置（特殊样式：无背景色，左侧线为青灰色）
-\tcolorboxenvironment{proof}{
-  boxrule=0pt,
-  boxsep=0pt,
-  blanker,             % 清除所有默认样式
-  borderline west={2pt}{0pt}{CadetBlue!80!white}, % 青灰色左侧线
-  left=8pt,
-  right=8pt,
-  sharp corners,
-  before skip=10pt,
-  after skip=10pt,
-  breakable,
-  before upper={\setlength{\parindent}{2em}},
-}
-% 示例环境配置（特殊样式：无背景色，左侧线为绿色）
-\tcolorboxenvironment{example}{
-  boxrule=0pt,
-  boxsep=0pt,
-  blanker,
-  borderline west={2pt}{0pt}{Green}, % 绿色左侧线
-  left=8pt,
-  right=8pt,
-  before skip=10pt,
-  after skip=10pt,
-  breakable,
-  before upper={\setlength{\parindent}{2em}},
-}
-% 注记环境配置（特殊样式：无背景色，左侧线为黑色）
-\tcolorboxenvironment{remark}{
-  boxrule=0pt,
-  boxsep=0pt,
-  blanker,
-  borderline west={2pt}{0pt}{black},  % 黑色左侧线
-  left=8pt,
-  right=8pt,
-  sharp corners,
-  before skip=10pt,
-  after skip=10pt,
-  breakable,
-  before upper={\setlength{\parindent}{2em}},
-}
-% 断言环境配置（特殊样式：无背景色，左侧线为品红）
-\tcolorboxenvironment{claim}{
-  boxrule=0pt,
-  boxsep=0pt,
-  blanker,
-  borderline west={2pt}{0pt}{magenta},  % 品红色左侧线
-  left=8pt,
-  right=8pt,
-  sharp corners,
-  before skip=10pt,
-  after skip=10pt,
-  breakable,
-  before upper={\setlength{\parindent}{2em}},
-}
-% 步骤环境配置（特殊样式：无背景色，左侧线为品红色）
-\tcolorboxenvironment{step}{
-  boxrule=0pt,
-  boxsep=0pt,
-  blanker,
-  borderline west={2pt}{0pt}{magenta},  % 品红色左侧线
-  left=8pt,
-  right=8pt,
-  sharp corners,
-  before skip=5pt,
-  after skip=5pt,
-  breakable,
-  before upper={\setlength{\parindent}{2em}},
-}
-% 练习环境配置（特殊样式：无背景色，左侧线为teal）
-\tcolorboxenvironment{exercise}{
-  boxrule=0pt,
-  boxsep=0pt,
-  blanker,
-  borderline west={2pt}{0pt}{teal},  % teal色左侧线
-  left=8pt,
-  right=8pt,
-  sharp corners,
-  before skip=10pt,
-  after skip=10pt,
-  breakable,
-  before upper={\setlength{\parindent}{2em}},
-}
+\myemptybgtcdsetup{proof}{CadetBlue!80!white}{}
+\myemptybgtcdsetup{example}{Green}{}
+\myemptybgtcdsetup{step}{orange}{before skip=5pt,after skip=5pt}
+\myemptybgtcdsetup{claim}{orange}{}
+\myemptybgtcdsetup{exercise}{teal}{}
