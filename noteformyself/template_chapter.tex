@@ -1,0 +1,37 @@
+\documentclass{noteformyself}
+
+\input{../notation.tex}             % 加载符号定义文件
+\addbibresource{../ref.bib}            % 添加参考文献文件
+
+
+\title{Template for the class ``Note for Myself'' in sectionlevel=section}
+\author{Tianle Yang}
+\date{\today}
+\authorinfo{\href{www.tianleyang.com}{My Homepage}}
+
+% % available on the mode "\sectionlevel=chapter" or "\sectionlevel=book".
+% \setCJKfamilyfont{lxgwwenkai}{LXGW WenKai} % 定义霞鹜文楷，若未安装，请去掉相关代码编译或使用其他字体
+% \coversentence{\CJKfamily{lxgwwenkai}阿巴阿巴阿巴阿巴阿巴阿巴阿巴阿巴!}
+% \coverimage{placeholder.jpg} % 封面图片，
+% % \coverlinecolor{red} % 封面线条颜色，available on the mode "\sectionlevel=chapter" or "\sectionlevel=book".
+% \covertitlefont{Allura} % 封面标题字体，available on the mode "\sectionlevel=chapter" or "\sectionlevel=book".
+% % \covertextcolor{green} % 封面文字颜色，available on the mode "\sectionlevel=chapter" or "\sectionlevel=book".
+
+
+\begin{document}
+
+    \maketitle
+
+    % \tableofcontents % 生成目录
+
+    \input{text.tex} % 这里是正文
+
+    \subsection{sectionlevel=section}
+
+    In this mode, the section is the highest level, and usually there is only one section in the document. 
+    This is no title page, no table of contents, and no cover image.
+    All theorem and definition environments are labelled with a unique number, and the numbering is continuous throughout the document.
+
+
+    % \printbibliography[heading=bibintoc, title={References}] % 打印参考文献
+\end{document}

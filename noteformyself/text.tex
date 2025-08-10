@@ -1,0 +1,97 @@
+\section{Section name}
+
+\subsection{Fonts in math mode}
+
+    We use unicode-math package to support unicode math symbols, the following is a list of some common math symbols:
+    \begin{itemize}
+        \item $\alpha$, $\beta$, $\gamma$, $\delta$, $\epsilon$, $\zeta$, $\eta$, $\theta$, $\iota$, $\kappa$, $\lambda$, $\mu$, $\nu$, $\xi$, $\pi$, $\rho$, $\sigma$, $\tau$, $\upsilon$, $\phi$, $\chi$, $\psi$, $\omega$
+        \item $\Alpha$, $\Beta$, $\Gamma$, $\Delta$, $\Epsilon$, $\Zeta$, $\Eta$, $\Theta$, $\Iota$, $\Kappa$, $\Lambda$, $\Mu$, $\Nu$, $\Xi$, $\Pi$, $\Rho$, $\Sigma$, $\Tau$, $\Upsilon$, $\Phi$, $\Chi$, $\Psi$, $\Omega$
+        \item $\infty$, $\partial$, $\nabla$, $\exists$, $\forall$, $\neg$, $\wedge$, $\vee$, $\implies$, $\iff$, $\subseteq$, $\supseteq$, $\cap$, $\cup$, $\setminus$, $\emptyset$
+        \item $0, 1, 2, 3, 4, 5, 6, 7, 8, 9$
+        \item $+, -, \times, \div, =, <, >, \leq, \geq$
+        \item $a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z$
+        \item $A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z$
+        \item \(\cala, \calb, \calc, \cald, \cale, \calf, \calg, \calh, \cali, \calj, \calk, \call, \calm, \caln, \calo, \calp, \calq, \calr, \cals, \calt, \calu, \calv, \calw, \calx, \caly, \calz\)
+        \item \(\calA, \calB, \calC, \calD, \calE, \calF, \calG, \calH, \calI, \calJ, \calK, \calL, \calM, \calN, \calO, \calP, \calQ, \calR, \calS, \calT, \calU, \calV, \calW, \calX, \calY, \calZ\)
+        \item \(\bba, \bbb, \bbc, \bbd, \bbe, \bbf, \bbg, \bbh, \bbi, \bbj, \bbk, \bbl, \bbm, \bbn, \bbo, \bbp, \bbq, \bbr, \bbs, \bbt, \bbu, \bbv, \bbw, \bbx, \bby, \bbz\)
+        \item \(\bbA, \bbB, \bbC, \bbD, \bbE, \bbF, \bbG, \bbH, \bbI, \bbJ, \bbK, \bbL, \bbM, \bbN, \bbO, \bbP, \bbQ, \bbR, \bbS, \bbT, \bbU, \bbV, \bbW, \bbX, \bbY, \bbZ\)
+        \item \(\sfa, \sfb, \sfc, \sfd, \sfe, \sff, \sfg, \sfh, \sfi, \sfj, \sfk, \sfl, \sfm, \sfn, \sfo, \sfp, \sfq, \sfr, \sfs, \sft, \sfu, \sfv, \sfw, \sfx, \sfy, \sfz\)
+        \item \(\sfA, \sfB, \sfC, \sfD, \sfE, \sfF, \sfG, \sfH, \sfI, \sfJ, \sfK, \sfL, \sfM, \sfN, \sfO, \sfP, \sfQ, \sfR, \sfS, \sfT, \sfU, \sfV, \sfW, \sfX, \sfY, \sfZ\)
+        \item \(\rma, \rmb, \rmc, \rmd, \rme, \rmf, \rmg, \rmh, \rmi, \rmj, \rmk, \rml, \rmm, \rmn, \rmo, \rmp, \rmq, \rmr, \rms, \rmt, \rmu, \rmv, \rmw, \rmx, \rmy, \rmz\)
+        \item \(\rmA, \rmB, \rmC, \rmD, \rmE, \rmF, \rmG, \rmH, \rmI, \rmJ, \rmK, \rmL, \rmM, \rmN, \rmO, \rmP, \rmQ, \rmR, \rmS, \rmT, \rmU, \rmV, \rmW, \rmX, \rmY, \rmZ\)
+        \item \(\fraka, \frakb, \frakc, \frakd, \frake, \frakf, \frakg, \frakh, \fraki, \frakj, \frakk, \frakl, \frakm, \frakn, \frako, \frakp, \frakq, \frakr, \fraks, \frakt, \fraku, \frakv, \frakw, \frakx, \fraky, \frakz\)
+        \item \(\frakA, \frakB, \frakC, \frakD, \frakE, \frakF, \frakG, \frakH, \frakI, \frakJ, \frakK, \frakL, \frakM, \frakN, \frakO, \frakP, \frakQ, \frakR, \frakS, \frakT, \frakU, \frakV, \frakW, \frakX, \frakY, \frakZ\)
+        \item \(\scrA, \scrB, \scrC, \scrD, \scrE, \scrF, \scrG, \scrH, \scrI, \scrJ, \scrK, \scrL, \scrM, \scrN, \scrO, \scrP, \scrQ, \scrR, \scrS, \scrT, \scrU, \scrV, \scrW, \scrX, \scrY, \scrZ\)
+        \item \(\scra, \scrb, \scrc, \scrd, \scre, \scrf, \scra, \scrh, \scri, \scrj, \scrk, \scrl, \scrm, \scrn, \scro, \scrp, \scrq, \scrr, \scrs, \scrt, \scru, \scrv, \scrw, \scrx, \scry, \scrz\)
+        \item \(\bfA, \bfB, \bfC, \bfD, \bfE, \bfF, \bfG, \bfH, \bfI, \bfJ, \bfK, \bfL, \bfM, \bfN, \bfO, \bfP, \bfQ, \bfR, \bfS, \bfT, \bfU, \bfV, \bfW, \bfX, \bfY, \bfZ\)
+        \item \(\bfa, \bfb, \bfc, \bfd, \bfe, \bff, \bfg, \bfh, \bfi, \bfj, \bfk, \bfl, \bfm, \bfn, \bfo, \bfp, \bfq, \bfr, \bfs, \bft, \bfu, \bfv, \bfw, \bfx, \bfy, \bfz\)
+    \end{itemize}
+
+\subsection{Theorems and definitions}
+    
+    There are two types of theorem environments, one is with background color, the other is without background color. 
+    The following is a list of theorem environments supported by this template:
+
+    \begin{definition}[this is a definition]
+        test    
+    \end{definition}
+    \begin{proposition}[this is a proposition]
+        test 
+    \end{proposition}
+    \begin{proof}
+        This is a proof environment, it is used to prove theorems, propositions, lemmas, corollaries, etc.
+        We allow to use step environments inside the proof environment, such as:
+        \begin{step}
+            This is a step environment, it is used to break down the proof into smaller steps.
+        \end{step}
+        \begin{step}
+            This is another step environment, it is used to break down the proof into smaller steps.
+        \end{step}
+        And the step environment should be used inside the proof environment.
+        The proof environment will automatically end with a square box.
+    \end{proof}
+    
+    \begin{theorem}[this is a theorem]
+        test 
+    \end{theorem}
+    \begin{proof}
+        This is a proof environment.
+        The step environment is labelled in the proof environment.
+        A new proof environment will refresh the step environment counter.
+        \begin{step}
+            Goal 1.
+        \end{step}
+        Proof of Goal 1.
+        \begin{step}
+            Goal 2.
+        \end{step}
+        Proof of Goal 2.
+    \end{proof}
+
+    \begin{lemma}[this is a lemma]
+        test
+    \end{lemma}
+    \begin{corollary}[this is a corollary]
+        test 
+    \end{corollary}
+    \begin{question}[this is a question]
+        test
+    \end{question}
+    \begin{conjecture}[this is a conjecture]
+        test
+    \end{conjecture}
+
+    \begin{example}[this is an example]
+        test 
+    \end{example}
+    \begin{exercise}[this is an exercise]
+        test
+    \end{exercise}
+    \begin{remark}[this is a remark]
+        test
+    \end{remark}
+    \begin{proof}[this is a proof]
+        test
+    \end{proof}
+
+
