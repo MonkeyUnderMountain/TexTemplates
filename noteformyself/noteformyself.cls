@@ -3,7 +3,7 @@
 % !TeX program = xelatex
 % !Bib program = biber
 % !TEX encoding = UTF-8 Unicode
-\ProvidesClass{noteformyself}[2025/08/10 for notes to myself]
+\ProvidesClass{noteformyself}[2025/08/11, v 1.0.1, for notes to myself]
 
 
 % 加载条件判断包（在使用\ifdefstring之前）
@@ -55,10 +55,10 @@
   % book模式页面设置
   \geometry{
     a4paper,
-    top=0.875in,
-    bottom=0.5in,
-    left=.5in,
-    right=.5in,
+    top=58pt,
+    bottom=36pt,
+    left=36pt,
+    right=36pt,
     includefoot,
     footskip=0pt
   }
@@ -66,10 +66,10 @@
   % 其他模式页面设置
   \geometry{
     a4paper,
-    top=1in,
-    bottom=0.5in,
-    left=.5in,
-    right=.5in,
+    top=63pt,
+    bottom=36pt,
+    left=36pt,
+    right=36pt,
     includefoot,
     footskip=0pt
   }
@@ -207,22 +207,36 @@
 %--------------------------------------------------------------------------
 
 % 统一灰色页眉线命令
-\newcommand{\grayheadrule}{\color{gray}\hrule width \headwidth height \headrulewidth\vspace{-\headrulewidth}}
-
-% section/chapter模式
-\makeatletter
-\fancypagestyle{sectionmainmatter}{
-  \fancyhead[L]{\nouppercase{\@title}}
-  \fancyhead[R]{\tikz[baseline=(char.base)]{\node[rectangle,fill=gray,text=white,inner sep=2pt] (char) {\thepage};}}
-  \renewcommand{\headrulewidth}{4pt}
-  \renewcommand{\headrule}{\grayheadrule}
-  \renewcommand{\footrule}{%
-    \vbox to -10pt{%
+\newcommand{\grayheadrule}{
+  \vbox to 2pt{%
       \color{gray}%
       \hrule width \headwidth height \headrulewidth%
       \vss%
     }%
-  }
+}
+% 统一灰色页脚线命令
+\newcommand{\grayfootrule}{
+  \vbox to -10pt{%
+      \color{gray}%
+      \hrule width \headwidth height \headrulewidth%
+      \vss%
+    }%
+}
+% section/chapter模式
+\makeatletter
+\fancypagestyle{sectionmainmatter}{
+  \pagestyle{fancy}
+  % 页眉样式
+    \fancyhead[R]{%
+      	\tikz[baseline=(char.base)]{
+        \node[shape=rectangle,fill=gray,text=white,inner sep=2pt] (char) {\thepage};
+      }%
+    }
+  \fancyhead[L]{\nouppercase{\@title}}
+  \renewcommand{\headrulewidth}{4pt}
+  \renewcommand{\headrule}{\grayheadrule}
+  % 页脚样式（留空）
+  \renewcommand{\footrule}{\grayfootrule}
   \fancyfoot{}
 }
 \makeatother
@@ -234,13 +248,7 @@
   \fancyhead[RE]{\rightmark}
   \renewcommand{\headrulewidth}{4pt}
   \renewcommand{\headrule}{\grayheadrule}
-  \renewcommand{\footrule}{%
-    \vbox to -10pt{%
-      \color{gray}%
-      \hrule width \headwidth height \headrulewidth%
-      \vss%
-    }%
-  }
+  \renewcommand{\footrule}{\grayfootrule}
   \fancyfoot{}
 }
 \makeatletter
@@ -272,7 +280,7 @@
 \renewcommand{\maketitle}{%
   \ifdefstring{\@sectionlevel}{book}{%
     % --- Book模式: 全页封面 ---
-    \newgeometry{top=.575in, bottom=0.7in, left=.5in, right=.5in, includefoot, footskip=0pt}
+    \newgeometry{top=45pt, bottom=51pt, left=36pt, right=36pt, includefoot, footskip=0pt}
     \begin{titlepage}
       \thispagestyle{fancy}
       % 装饰线参数
@@ -374,7 +382,7 @@
   }{%
     \ifdefstring{\@sectionlevel}{chapter}{%
       % --- Chapter模式: 全页封面 ---
-      \newgeometry{top=.7in, bottom=0.7in, left=.5in, right=.5in, includefoot, footskip=0pt}
+      \newgeometry{top=50pt, bottom=51pt, left=36pt, right=36pt, includefoot, footskip=0pt}
       \begin{titlepage}
         \thispagestyle{fancy}
         % 装饰线参数
@@ -565,7 +573,7 @@
 \declaretheorem[sibling=definition,name=Remark]{remark}
 \declaretheorem[sibling=definition,name=Claim]{claim}
 \declaretheorem[sibling=definition,name=Example]{example}
-\declaretheorem[sibling=definition,name=Exercise,style=definition]{exercise}
+\declaretheorem[sibling=definition,name=Exercise]{exercise}
 
 % 定义step子环境（在proof环境中使用，每个proof重置计数器）
 \newcounter{step}
