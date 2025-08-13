@@ -3,7 +3,7 @@
 % !TeX program = xelatex
 % !Bib program = biber
 % !TEX encoding = UTF-8 Unicode
-\ProvidesClass{noteformyself}[2025/08/11, v 1.0.2, for notes to myself]
+\ProvidesClass{noteformyself}[2025/08/13, v 1.0.3, for notes to myself]
 
 
 % 加载条件判断包（在使用\ifdefstring之前）
@@ -594,6 +594,14 @@
 % 重新定义globalstep的显示格式，让它显示为local step number
 \renewcommand{\theglobalstep}{\arabic{step}}
 
+% Define a separate subproof environment (amsthm-based, independent from proof)
+\newenvironment{subproof}[1][Proof]{%
+  \par\noindent\textit{#1.}\ \ignorespaces
+}{%
+  \hfill$\square$
+  \par
+}
+
 % 设置cleveref引用格式
 \crefname{definition}{Definition}{Definitions}
 \crefname{proposition}{Proposition}{Propositions}
@@ -656,3 +664,5 @@
 \myemptybgtcdsetup{step}{orange}{before skip=5pt,after skip=5pt}
 \myemptybgtcdsetup{claim}{orange}{}
 \myemptybgtcdsetup{exercise}{teal}{}
+\myemptybgtcdsetup{remark}{olive}{}
+\myemptybgtcdsetup{subproof}{CadetBlue!80!white}{}
