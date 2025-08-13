@@ -3,7 +3,7 @@
 % !TeX program = xelatex
 % !Bib program = biber
 % !TEX encoding = UTF-8 Unicode
-\ProvidesClass{noteformyself}[2025/08/11, v 1.0.1, for notes to myself]
+\ProvidesClass{noteformyself}[2025/08/11, v 1.0.2, for notes to myself]
 
 
 % 加载条件判断包（在使用\ifdefstring之前）
@@ -589,9 +589,7 @@
 }
 % 在proof环境开始时重置step计数器
 \AtBeginEnvironment{proof}{%
-% Note: \theglobalstep displays the local step number for referencing,
-% not the global unique value. This may confuse users referencing steps globally.
-\renewcommand{\theglobalstep}{\arabic{step}}
+  \setcounter{step}{0}%
 }
 % 重新定义globalstep的显示格式，让它显示为local step number
 \renewcommand{\theglobalstep}{\arabic{step}}

@@ -41,10 +41,10 @@
     \begin{proof}
         This is a proof environment, it is used to prove theorems, propositions, lemmas, corollaries, etc.
         We allow to use step environments inside the proof environment, such as:
-        \begin{step}
+        \begin{step}\label{step:1_in_proof_1}
             This is a step environment, it is used to break down the proof into smaller steps.
         \end{step}
-        \begin{step}
+        \begin{step}\label{step:2_in_proof_1}
             This is another step environment, it is used to break down the proof into smaller steps.
         \end{step}
         And the step environment should be used inside the proof environment.
@@ -58,14 +58,25 @@
         This is a proof environment.
         The step environment is labelled in the proof environment.
         A new proof environment will refresh the step environment counter.
-        \begin{step}
+        \begin{step}\label{step:1_in_proof_2}
             Goal 1.
         \end{step}
         Proof of Goal 1.
-        \begin{step}
+        \begin{step}\label{step:2_in_proof_2}
             Goal 2.
         \end{step}
         Proof of Goal 2.
+
+        Here we test the hyperlink to the step environment \cref{step:1_in_proof_1}.
+
+        You can also use the claim environment to make a claim in the proof environment, such as:
+        \begin{claim}\label{claim:1_in_proof_2}
+            This is a claim environment, it is used to make a claim in the proof environment.
+        \end{claim}
+        And the claim environment should be used inside the proof environment.
+    \end{proof}
+    \begin{proof}[Proof of \cref{claim:1_in_proof_2}]
+        This is a proof for the \cref{claim:1_in_proof_2}.
     \end{proof}
 
     \begin{lemma}[this is a lemma]
