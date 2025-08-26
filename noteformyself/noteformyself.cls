@@ -3,7 +3,7 @@
 % !TeX program = xelatex
 % !Bib program = biber
 % !TEX encoding = UTF-8 Unicode
-\ProvidesClass{noteformyself}[2025/08/13, v 1.0.3, for notes to myself]
+\ProvidesClass{noteformyself}[2025/08/26, v 1.0.4, for notes to myself]
 
 
 % 加载条件判断包（在使用\ifdefstring之前）
@@ -459,7 +459,9 @@
         \vspace{0.8cm}
         \begin{flushright}
           \begin{minipage}{0.8\textwidth}
-            \large \textcolor{\@covertextcolor}{\@coversentence}
+            \begin{flushright}
+              \large \textcolor{\@covertextcolor}{\@coversentence}
+            \end{flushright}
           \end{minipage}
         \end{flushright}
         \vspace{0.8cm}
