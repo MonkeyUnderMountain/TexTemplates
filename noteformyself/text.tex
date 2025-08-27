@@ -80,11 +80,29 @@
     \end{proof}
     \begin{proof}[Proof of \cref{claim:1_in_proof_2}]
         This is a proof for the \cref{claim:1_in_proof_2}.
+        Here we test the case environment.
+        \begin{case}\label{case:1_in_proof_2}
+            This is a case environment, it is used to break down the proof into smaller cases.
+        \end{case}
+        \begin{case}\label{case:2_in_proof_2}
+            This is another case environment, it is used to break down the proof into smaller cases.
+        \end{case}
+        And the case environment should be used inside the proof environment.
     \end{proof}
 
     \begin{lemma}[this is a lemma]
         test
     \end{lemma}
+    \begin{proof}
+        Here we test case environment again.
+        \begin{case}\label{case:1_in_proof_3} 
+            This is a case environment, it is used to break down the proof into smaller cases.
+        \end{case}
+        \begin{case}\label{case:2_in_proof_3}
+            This is another case environment, it is used to break down the proof into smaller cases.
+        \end{case}
+    \end{proof}
+
     \begin{corollary}[this is a corollary]
         test 
     \end{corollary}
@@ -103,6 +121,7 @@
     \end{exercise}
     \begin{remark}[this is a remark]
         test
+        Here we test the hyperlink to the case environment \cref{case:1_in_proof_2}.
     \end{remark}
     \begin{proof}[this is a proof]
         test

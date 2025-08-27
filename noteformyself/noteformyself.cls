@@ -3,7 +3,7 @@
 % !TeX program = xelatex
 % !Bib program = biber
 % !TEX encoding = UTF-8 Unicode
-\ProvidesClass{noteformyself}[2025/08/26, v 1.0.4, for notes to myself]
+\ProvidesClass{noteformyself}[2025/08/27, v 1.0.5, for notes to myself]
 
 
 % 加载条件判断包（在使用\ifdefstring之前）
@@ -589,19 +589,28 @@
 }{%
   \par\smallskip%
 }
-% 在proof环境开始时重置step计数器
-\AtBeginEnvironment{proof}{%
-  \setcounter{step}{0}%
-}
 % 重新定义globalstep的显示格式，让它显示为local step number
 \renewcommand{\theglobalstep}{\arabic{step}}
 
-% Define a separate subproof environment (amsthm-based, independent from proof)
-\newenvironment{subproof}[1][Proof]{%
-  \par\noindent\textit{#1.}\ \ignorespaces
+% 定义case子环境（在proof环境中使用，每个proof重置计数器）
+\newcounter{case}
+\newcounter{globalcase} % Global unique case counter for anchors
+% 使用全局唯一计数器globalcase进行引用，但显示本地计数器case的值
+\newenvironment{case}[1][]{%
+  \refstepcounter{case}%
+  \refstepcounter{globalcase}% This creates unique anchors
+  \par\smallskip%
+  \noindent\textbf{Case \thecase\if\relax\detokenize{#1}\relax\else\ (#1)\fi.}\ %
 }{%
-  \hfill$\square$
-  \par
+  \par\smallskip%
+}
+% 重新定义globalcase的显示格式，让它显示为local case number
+\renewcommand{\theglobalcase}{\arabic{case}}
+
+% 在proof环境开始时重置step和case计数器
+\AtBeginEnvironment{proof}{%
+  \setcounter{case}{0}%
+  \setcounter{step}{0}%
 }
 
 % 设置cleveref引用格式
@@ -618,6 +627,8 @@
 \crefname{proof}{Proof}{Proofs}
 \crefname{claim}{Claim}{Claims}
 \crefname{globalstep}{Step}{Steps} % Global unique step counter
+\crefname{globalcase}{Case}{Cases} % Global unique case counter
+
 
 % 定义有背景色的定理环境样式，应用于definition, proposition, theorem, lemma, corollary, conjecture, question
 \newcommand{\mybackgroundtcbsetup}[3]{%
@@ -664,7 +675,7 @@
 \myemptybgtcdsetup{proof}{CadetBlue!80!white}{}
 \myemptybgtcdsetup{example}{Green}{}
 \myemptybgtcdsetup{step}{orange}{before skip=5pt,after skip=5pt}
+\myemptybgtcdsetup{case}{orange}{before skip=5pt,after skip=5pt}
 \myemptybgtcdsetup{claim}{orange}{}
 \myemptybgtcdsetup{exercise}{teal}{}
 \myemptybgtcdsetup{remark}{olive}{}
-\myemptybgtcdsetup{subproof}{CadetBlue!80!white}{}
