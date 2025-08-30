@@ -117,11 +117,12 @@
 \RequirePackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}  
 % 设置数学字体, needs to load the main font first
 % Cambria Math is only available on Windows.
-\IfFontExistsTF{Cambria Math}{
-  \setmathfont{Cambria Math}  % like cal, support lowercase, Windows only
-}{
-  \setmathfont{STIX Two Math} % fallback for non-Windows systems
-}
+% \IfFontExistsTF{Cambria Math}{
+%   \setmathfont{Cambria Math}  % like cal, support lowercase, Windows only
+% }{
+%   \setmathfont{STIX Two Math} % fallback for non-Windows systems
+% }
+\setmathfont{STIX Two Math} %
 \setmathfont{STIX Two Math}[range=cal] % like cal, support lowercase
 \setmathfont{Libertinus Math}[range=scr] % like scr, support lowercase
 % \setmathfont{XITS Math}[range=scr] % like scr, support lowercase
@@ -129,6 +130,7 @@
 % \setmathfont{Latin Modern Math}  % like cal, do not support lowercase
 % \setmathfont{Asana Math}[range=scr] % like scr, support lowercase
 % \setmathfont{Fira Math} % like sf, lack many fonts
+% \setmathfont{Euler Math} % like 
 
 % 引用系统
 \RequirePackage[backend=biber,style=alphabetic,backref]{biblatex} % 参考文献管理
