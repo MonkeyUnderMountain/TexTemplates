@@ -3,7 +3,7 @@
 % !TeX program = xelatex
 % !Bib program = biber
 % !TEX encoding = UTF-8 Unicode
-\ProvidesClass{noteformyself}[2025/08/27, v 1.0.5, for notes to myself]
+\ProvidesClass{noteformyself}[2025/08/31, v 1.0.6, for notes to myself]
 
 
 % 加载条件判断包（在使用\ifdefstring之前）
