@@ -3,7 +3,7 @@
 % !TeX program = xelatex
 % !Bib program = biber
 % !TEX encoding = UTF-8 Unicode
-\ProvidesClass{noteformyself}[2025/08/31, v 1.0.6, for notes to myself]
+\ProvidesClass{noteformyself}[2025/09/05, v 1.1.0, for notes to myself]
 
 
 % 加载条件判断包（在使用\ifdefstring之前）
@@ -75,7 +75,7 @@
   }
 }%
 \makeatother
-\renewcommand{\baselinestretch}{1.3}
+\renewcommand{\baselinestretch}{1.2} % 行距1.2倍
 
 
 
@@ -96,33 +96,31 @@
 % 核心包加载
 %--------------------------------------------------------------------------
 % 基础功能包
-\RequirePackage{graphicx}       % 图形插入支持
-\RequirePackage{adjustbox}      % 高级图片调整（支持max width/height）
-\RequirePackage{framed}         % 边框环境
-\RequirePackage{amsmath,amsthm,amssymb,amsfonts} % 数学符号和字体支持
-\RequirePackage{thmtools}       % 高级定理工具包（提供declaretheorem）
-\RequirePackage[dvipsnames]{xcolor} % 颜色支持
-\RequirePackage[most]{tcolorbox} % 彩色盒子环境
-\RequirePackage{tikz}           % 矢量绘图
-\RequirePackage{pstricks-add}   % PSTricks扩展
-\RequirePackage{tikz-cd}        % 交换图绘制
-\RequirePackage[all]{xy}        % 交换图绘制
-\RequirePackage{mathtools}      % 数学工具包（提供多种数学环境和命令）
+\RequirePackage{graphicx}                             % 图形插入支持
+\RequirePackage{longtable}                            % 长表格支持
+\RequirePackage{amsmath,amsthm,amssymb,amsfonts}      % 数学符号和字体支持
+\RequirePackage{thmtools}                             % 高级定理工具包（提供declaretheorem）
+\RequirePackage[dvipsnames]{xcolor}                   % 颜色支持
+\RequirePackage{tikz}                                 % 矢量绘图
+\RequirePackage{pstricks-add}                         % PSTricks扩展
+\RequirePackage{tikz-cd}                              % 交换图绘制
+\RequirePackage[all]{xy}                              % 交换图绘制
+\RequirePackage{mathtools}                            % 数学工具包（提供多种数学环境和命令）
 
 % 中文支持
-\RequirePackage[scheme=plain]{ctex} % 中文基础方案
-\RequirePackage{fontspec}      % 字体配置
+\RequirePackage[scheme=plain]{ctex}   % 中文基础方案
+\RequirePackage{fontspec}             % 字体配置
 
 % Unicode数学字体支持 - 必须在mathtools之后加载
 \RequirePackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}  
-% 设置数学字体, needs to load the main font first
-% Cambria Math is only available on Windows.
-% \IfFontExistsTF{Cambria Math}{
-%   \setmathfont{Cambria Math}  % like cal, support lowercase, Windows only
-% }{
-%   \setmathfont{STIX Two Math} % fallback for non-Windows systems
-% }
+% 设置数学字体
 \setmathfont{STIX Two Math} %
+\IfFontExistsTF{Cambria Math}{
+  \setmathfont{Cambria Math}[range={\mathalpha}] % Cambria Math is only available on Windows.
+}{
+  \setmathfont{Latin Modern Math}[range={\mathalpha}] % fallback for non-Windows systems
+}
+\setmathfont{Libertinus Math}[range=bb] % 
 \setmathfont{STIX Two Math}[range=cal] % like cal, support lowercase
 \setmathfont{Libertinus Math}[range=scr] % like scr, support lowercase
 % \setmathfont{XITS Math}[range=scr] % like scr, support lowercase
@@ -138,17 +136,200 @@
 % 交互功能
 \RequirePackage{hyperref}       % 超链接支持
 \hypersetup{
-  colorlinks = true,
-  linkcolor = blue,
-  filecolor = blue,
-  urlcolor = blue,
-  citecolor=cyan,
+  colorlinks = true,            % 链接颜色
+  linkcolor = blue,             % 跳转到文档内部
+  urlcolor = magenta,           % 跳转到外部链接
+  citecolor=cyan,               % 参考文献引用
 }
 \RequirePackage[nameinlink]{cleveref} % 智能引用（自动添加前缀）
 
-% 页面装饰
-\RequirePackage{fancyhdr}       % 页眉页脚定制
-\RequirePackage[bottom,multiple]{footmisc} % 脚注增强
+% 列表环境标号配置
+\RequirePackage{enumitem}       % Required for custom labels
+\setlist[enumerate,1]{label=(\alph*)} % 第一层级：小写字母加括号 (a), (b), ...)
+\setlist[enumerate,2]{label=(\roman*)} % 第二层级：小写罗马数字加括号 (i), (ii), ...)
+
+
+
+
+
+%--------------------------------------------------------------------------
+% 定理环境可视化配置
+%--------------------------------------------------------------------------
+\RequirePackage[most]{tcolorbox} % 彩色盒子环境
+
+% 定义定理样式模板
+\newtheoremstyle{mystyle}{}{}{}{}{\bfseries}{.}{ }{}
+\theoremstyle{mystyle}
+
+% 定义具体定理环境（共享计数器）
+\makeatletter
+\ifdefstring{\@sectionlevel}{book}{%
+  % 书籍级别：book模式
+  \newtheorem{definition}{Definition}[section] % 定义环境按章节编号
+}{%
+  \ifdefstring{\@sectionlevel}{chapter}{%
+    % 章节级别：chapter模式
+    \newtheorem{definition}{Definition}[section] % 定义环境按章节编号
+  }{%
+    % 章节级别：section模式（默认）
+    \newtheorem{definition}{Definition}
+  }%
+}%
+\makeatother
+% Use \declaretheorem instead of \newtheorem for better cleveref support
+\declaretheorem[sibling=definition,name=Proposition]{proposition}
+\declaretheorem[sibling=definition,name=Def-Prop]{def-prop}
+\declaretheorem[sibling=definition,name=Theorem]{theorem}
+\declaretheorem[sibling=definition,name=Lemma]{lemma}
+\declaretheorem[sibling=definition,name=Corollary]{corollary}
+\declaretheorem[sibling=definition,name=Conjecture]{conjecture}
+\declaretheorem[sibling=definition,name=Question]{question}
+\declaretheorem[sibling=definition,name=Remark]{remark}
+\declaretheorem[sibling=definition,name=Claim]{claim}
+\declaretheorem[sibling=definition,name=Example]{example}
+\declaretheorem[sibling=definition,name=Exercise]{exercise}
+
+% 定义step子环境（在proof环境中使用，每个proof重置计数器）
+\newcounter{step}
+\newcounter{globalstep} % Global unique step counter for anchors
+% 使用全局唯一计数器globalstep进行引用，但显示本地计数器step的值
+\newenvironment{step}[1][]{%
+  \refstepcounter{step}%
+  \refstepcounter{globalstep}% This creates unique anchors
+  \par\smallskip%
+  \noindent\textbf{Step \thestep\if\relax\detokenize{#1}\relax\else\ (#1)\fi.}\ %
+}{%
+  \par\smallskip%
+}
+% 重新定义globalstep的显示格式，让它显示为local step number
+\renewcommand{\theglobalstep}{\arabic{step}}
+
+% 定义case子环境（在proof环境中使用，每个proof重置计数器）
+\newcounter{case}
+\newcounter{globalcase} % Global unique case counter for anchors
+% 使用全局唯一计数器globalcase进行引用，但显示本地计数器case的值
+\newenvironment{case}[1][]{%
+  \refstepcounter{case}%
+  \refstepcounter{globalcase}% This creates unique anchors
+  \par\smallskip%
+  \noindent\textbf{Case \thecase\if\relax\detokenize{#1}\relax\else\ (#1)\fi.}\ %
+}{%
+  \par\smallskip%
+}
+% 重新定义globalcase的显示格式，让它显示为local case number
+\renewcommand{\theglobalcase}{\arabic{case}}
+
+% 在proof环境开始时重置step和case计数器
+\AtBeginEnvironment{proof}{%
+  \setcounter{case}{0}%
+  \setcounter{step}{0}%
+}
+
+% 设置cleveref引用格式
+\crefname{definition}{Definition}{Definitions}
+\crefname{proposition}{Proposition}{Propositions}
+\crefname{theorem}{Theorem}{Theorems}
+\crefname{lemma}{Lemma}{Lemmas}
+\crefname{corollary}{Corollary}{Corollaries}
+\crefname{conjecture}{Conjecture}{Conjectures}
+\crefname{question}{Question}{Questions}
+\crefname{remark}{Remark}{Remarks}
+\crefname{example}{Example}{Examples}
+\crefname{exercise}{Exercise}{Exercises}
+\crefname{proof}{Proof}{Proofs}
+\crefname{claim}{Claim}{Claims}
+\crefname{globalstep}{Step}{Steps} % Global unique step counter
+\crefname{globalcase}{Case}{Cases} % Global unique case counter
+\crefname{section}{Section}{Sections}
+\crefname{subsection}{Subsection}{Subsections}
+
+
+% 定义有背景色的定理环境样式，应用于definition, proposition, theorem, lemma, corollary, conjecture, question
+\newcommand{\mybackgroundtcbsetup}[3]{%
+  \tcolorboxenvironment{#1}{
+    boxrule=0pt,
+    boxsep=0pt,
+    colback={#2!10},
+    left=8pt,
+    right=8pt,
+    enhanced jigsaw,
+    borderline west={2pt}{0pt}{#2},
+    sharp corners,
+    before skip=10pt,
+    after skip=10pt,
+    breakable,
+    #3
+  }
+}
+\mybackgroundtcbsetup{definition}{blue}{}
+\mybackgroundtcbsetup{proposition}{purple}{}
+\mybackgroundtcbsetup{theorem}{red}{}
+\mybackgroundtcbsetup{lemma}{orange}{}
+\mybackgroundtcbsetup{corollary}{magenta}{}
+\mybackgroundtcbsetup{conjecture}{violet}{}
+\mybackgroundtcbsetup{question}{Thistle}{}
+
+% 定义背景色的remark, example, claim, step, exercise环境样式
+\newcommand{\myemptybgtcdsetup}[3]{%
+  \tcolorboxenvironment{#1}{
+    boxrule=0pt,
+    boxsep=0pt,
+    blanker,             % 清除所有默认样式
+    borderline west={2pt}{0pt}{#2}, % 左侧线
+    left=8pt,
+    right=8pt,
+    sharp corners,
+    before skip=10pt,
+    after skip=10pt,
+    breakable,
+    before upper={\setlength{\parindent}{2em}},
+    #3
+  }
+}
+\myemptybgtcdsetup{proof}{CadetBlue!80!white}{}
+\myemptybgtcdsetup{example}{Green}{}
+\myemptybgtcdsetup{step}{orange}{before skip=5pt,after skip=5pt}
+\myemptybgtcdsetup{case}{orange}{before skip=5pt,after skip=5pt}
+\myemptybgtcdsetup{claim}{orange}{}
+\myemptybgtcdsetup{exercise}{teal}{}
+\myemptybgtcdsetup{remark}{olive}{}
+
+
+
+
+%--------------------------------------------------------------------------
+% 代码块配置
+%--------------------------------------------------------------------------
+\RequirePackage{listings}     % 代码高亮支持
+% 定义颜色
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% 定义 listings 风格，可以定义多个
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},  % 背景色
+    commentstyle= \color{red!50!green!50!blue!50},  % 注释的颜色
+    keywordstyle= \color{blue!70},  % 关键字/程序语言中的保留字颜色
+    numberstyle=\tiny\color{codegray},  % 左侧行号显示的颜色
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,  % 对过长的代码自动换行
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,  % 在左侧显示行号
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,  % 不显示字符串中的空格
+    showtabs=false,
+    tabsize=2,
+    frame=single  % [none | single | shadowbox] 显示边框
+}
+\lstset{style=mystyle}  % 使用 listings 风格
+
+\crefname{lstlisting}{Code}{Codes} % 设置cleveref引用格式
 
 
 
@@ -207,6 +388,9 @@
 %--------------------------------------------------------------------------
 % 页眉页脚样式配置
 %--------------------------------------------------------------------------
+% 页面装饰
+\RequirePackage{fancyhdr}       % 页眉页脚定制
+\RequirePackage[bottom,multiple]{footmisc} % 脚注增强
 
 % 统一灰色页眉线命令
 \newcommand{\grayheadrule}{
@@ -278,6 +462,7 @@
 %--------------------------------------------------------------------------
 % 封面页重定义
 %--------------------------------------------------------------------------
+\RequirePackage{adjustbox}      % 高级图片调整（支持max width/height）
 \makeatletter
 \renewcommand{\maketitle}{%
   \ifdefstring{\@sectionlevel}{book}{%
@@ -494,15 +679,6 @@
 
 
 
-% 列表环境配置
-%--------------------------------------------------------------------------
-\RequirePackage{enumitem}       % Required for custom labels
-\setlist[enumerate,1]{label=(\alph*)} % 第一层级：小写字母加括号 (a), (b), ...)
-\setlist[enumerate,2]{label=(\roman*)} % 第二层级：小写罗马数字加括号 (i), (ii), ...)
-
-
-
-
 %--------------------------------------------------------------------------
 % 章节标题格式配置
 %--------------------------------------------------------------------------
@@ -540,144 +716,3 @@
   }%
 }%
 \makeatother
-
-
-
-
-%--------------------------------------------------------------------------
-% 定理环境可视化配置
-%--------------------------------------------------------------------------
-% 定义定理样式模板
-\newtheoremstyle{mystyle}{}{}{}{}{\bfseries}{.}{ }{}
-\theoremstyle{mystyle}
-
-% 定义具体定理环境（共享计数器）
-\makeatletter
-\ifdefstring{\@sectionlevel}{book}{%
-  % 书籍级别：book模式
-  \newtheorem{definition}{Definition}[section] % 定义环境按章节编号
-}{%
-  \ifdefstring{\@sectionlevel}{chapter}{%
-    % 章节级别：chapter模式
-    \newtheorem{definition}{Definition}[section] % 定义环境按章节编号
-  }{%
-    % 章节级别：section模式（默认）
-    \newtheorem{definition}{Definition}
-  }%
-}%
-\makeatother
-% Use \declaretheorem instead of \newtheorem for better cleveref support
-\declaretheorem[sibling=definition,name=Proposition]{proposition}
-\declaretheorem[sibling=definition,name=Def-Prop]{def-prop}
-\declaretheorem[sibling=definition,name=Theorem]{theorem}
-\declaretheorem[sibling=definition,name=Lemma]{lemma}
-\declaretheorem[sibling=definition,name=Corollary]{corollary}
-\declaretheorem[sibling=definition,name=Conjecture]{conjecture}
-\declaretheorem[sibling=definition,name=Question]{question}
-\declaretheorem[sibling=definition,name=Remark]{remark}
-\declaretheorem[sibling=definition,name=Claim]{claim}
-\declaretheorem[sibling=definition,name=Example]{example}
-\declaretheorem[sibling=definition,name=Exercise]{exercise}
-
-% 定义step子环境（在proof环境中使用，每个proof重置计数器）
-\newcounter{step}
-\newcounter{globalstep} % Global unique step counter for anchors
-% 使用全局唯一计数器globalstep进行引用，但显示本地计数器step的值
-\newenvironment{step}[1][]{%
-  \refstepcounter{step}%
-  \refstepcounter{globalstep}% This creates unique anchors
-  \par\smallskip%
-  \noindent\textbf{Step \thestep\if\relax\detokenize{#1}\relax\else\ (#1)\fi.}\ %
-}{%
-  \par\smallskip%
-}
-% 重新定义globalstep的显示格式，让它显示为local step number
-\renewcommand{\theglobalstep}{\arabic{step}}
-
-% 定义case子环境（在proof环境中使用，每个proof重置计数器）
-\newcounter{case}
-\newcounter{globalcase} % Global unique case counter for anchors
-% 使用全局唯一计数器globalcase进行引用，但显示本地计数器case的值
-\newenvironment{case}[1][]{%
-  \refstepcounter{case}%
-  \refstepcounter{globalcase}% This creates unique anchors
-  \par\smallskip%
-  \noindent\textbf{Case \thecase\if\relax\detokenize{#1}\relax\else\ (#1)\fi.}\ %
-}{%
-  \par\smallskip%
-}
-% 重新定义globalcase的显示格式，让它显示为local case number
-\renewcommand{\theglobalcase}{\arabic{case}}
-
-% 在proof环境开始时重置step和case计数器
-\AtBeginEnvironment{proof}{%
-  \setcounter{case}{0}%
-  \setcounter{step}{0}%
-}
-
-% 设置cleveref引用格式
-\crefname{definition}{Definition}{Definitions}
-\crefname{proposition}{Proposition}{Propositions}
-\crefname{theorem}{Theorem}{Theorems}
-\crefname{lemma}{Lemma}{Lemmas}
-\crefname{corollary}{Corollary}{Corollaries}
-\crefname{conjecture}{Conjecture}{Conjectures}
-\crefname{question}{Question}{Questions}
-\crefname{remark}{Remark}{Remarks}
-\crefname{example}{Example}{Examples}
-\crefname{exercise}{Exercise}{Exercises}
-\crefname{proof}{Proof}{Proofs}
-\crefname{claim}{Claim}{Claims}
-\crefname{globalstep}{Step}{Steps} % Global unique step counter
-\crefname{globalcase}{Case}{Cases} % Global unique case counter
-
-
-% 定义有背景色的定理环境样式，应用于definition, proposition, theorem, lemma, corollary, conjecture, question
-\newcommand{\mybackgroundtcbsetup}[3]{%
-  \tcolorboxenvironment{#1}{
-    boxrule=0pt,
-    boxsep=0pt,
-    colback={#2!10},
-    left=8pt,
-    right=8pt,
-    enhanced jigsaw,
-    borderline west={2pt}{0pt}{#2},
-    sharp corners,
-    before skip=10pt,
-    after skip=10pt,
-    breakable,
-    #3
-  }
-}
-\mybackgroundtcbsetup{definition}{blue}{}
-\mybackgroundtcbsetup{proposition}{purple}{}
-\mybackgroundtcbsetup{theorem}{red}{}
-\mybackgroundtcbsetup{lemma}{orange}{}
-\mybackgroundtcbsetup{corollary}{magenta}{}
-\mybackgroundtcbsetup{conjecture}{violet}{}
-\mybackgroundtcbsetup{question}{Thistle}{}
-
-% 定义背景色的remark, example, claim, step, exercise环境样式
-\newcommand{\myemptybgtcdsetup}[3]{%
-  \tcolorboxenvironment{#1}{
-    boxrule=0pt,
-    boxsep=0pt,
-    blanker,             % 清除所有默认样式
-    borderline west={2pt}{0pt}{#2}, % 左侧线
-    left=8pt,
-    right=8pt,
-    sharp corners,
-    before skip=10pt,
-    after skip=10pt,
-    breakable,
-    before upper={\setlength{\parindent}{2em}},
-    #3
-  }
-}
-\myemptybgtcdsetup{proof}{CadetBlue!80!white}{}
-\myemptybgtcdsetup{example}{Green}{}
-\myemptybgtcdsetup{step}{orange}{before skip=5pt,after skip=5pt}
-\myemptybgtcdsetup{case}{orange}{before skip=5pt,after skip=5pt}
-\myemptybgtcdsetup{claim}{orange}{}
-\myemptybgtcdsetup{exercise}{teal}{}
-\myemptybgtcdsetup{remark}{olive}{}

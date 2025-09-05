@@ -1,4 +1,4 @@
-\section{Section name}
+\section{Section name}\label{sec:test}
 
 \subsection{Fonts in math mode}
 
@@ -30,7 +30,7 @@
         \item \(\rma, \rmb, \rmc, \rmd, \rme, \rmf, \rmg, \rmh, \rmi, \rmj, \rmk, \rml, \rmm, \rmn, \rmo, \rmp, \rmq, \rmr, \rms, \rmt, \rmu, \rmv, \rmw, \rmx, \rmy, \rmz\);
     \end{itemize}
 
-\subsection{Theorems and definitions}
+\subsection{Theorems and definitions}\label{subsec:theorems_and_definitions}
     
     There are two types of theorem environments, one is with background color, the other is without background color. 
     The following is a list of theorem environments supported by this template:
@@ -105,7 +105,7 @@
     \end{proof}
 
     \begin{corollary}[this is a corollary]
-        test 
+        test here we test the hyperlink to the code environment \cref{lst:python_example}.
     \end{corollary}
     \begin{question}[this is a question]
         test
@@ -125,7 +125,15 @@
         Here we test the hyperlink to the case environment \cref{case:1_in_proof_2}.
     \end{remark}
     \begin{proof}[this is a proof]
-        test
+        test, here we test \cref{sec:test} and \cref{subsec:theorems_and_definitions}.
     \end{proof}
+
+    Here we test the code block environment:
+    \begin{lstlisting}[language=Python, caption=Python code example, label=lst:python_example]
+        def hello():
+            print("Hello, world!")
+    \end{lstlisting}
+
+    \lstinputlisting[language=Python, caption=Python code example from file, label=lst:python_example_from_file]{code.py}
 
 
