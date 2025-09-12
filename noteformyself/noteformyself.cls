@@ -3,7 +3,7 @@
 % !TeX program = xelatex
 % !Bib program = biber
 % !TEX encoding = UTF-8 Unicode
-\ProvidesClass{noteformyself}[2025/09/05, v 1.1.0, for notes to myself]
+\ProvidesClass{noteformyself}[2025/09/12, v 1.1.1, for notes to myself]
 
 
 % 加载条件判断包（在使用\ifdefstring之前）
@@ -462,6 +462,10 @@
 %--------------------------------------------------------------------------
 % 封面页重定义
 %--------------------------------------------------------------------------
+% Prevent redefinition errors when trimclip/adjustbox defines these macros
+\let\trimbox\relax
+\let\clipbox\relax
+\let\marginbox\relax
 \RequirePackage{adjustbox}      % 高级图片调整（支持max width/height）
 \makeatletter
 \renewcommand{\maketitle}{%
