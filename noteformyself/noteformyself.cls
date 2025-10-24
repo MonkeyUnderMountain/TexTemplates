@@ -3,7 +3,7 @@
 % !TeX program = xelatex
 % !Bib program = biber
 % !TEX encoding = UTF-8 Unicode
-\ProvidesClass{noteformyself}[2025/09/12, v 1.1.1, for notes to myself]
+\ProvidesClass{noteformyself}[2025/10/24, v 1.1.2, for notes to myself]
 
 
 % 加载条件判断包（在使用\ifdefstring之前）
@@ -178,7 +178,6 @@
 \makeatother
 % Use \declaretheorem instead of \newtheorem for better cleveref support
 \declaretheorem[sibling=definition,name=Proposition]{proposition}
-\declaretheorem[sibling=definition,name=Def-Prop]{def-prop}
 \declaretheorem[sibling=definition,name=Theorem]{theorem}
 \declaretheorem[sibling=definition,name=Lemma]{lemma}
 \declaretheorem[sibling=definition,name=Corollary]{corollary}
@@ -293,6 +292,26 @@
 \myemptybgtcdsetup{claim}{orange}{}
 \myemptybgtcdsetup{exercise}{teal}{}
 \myemptybgtcdsetup{remark}{olive}{}
+
+
+% 定义slogan环境
+\newtheoremstyle{sloganstyle}{}{}{\itshape}{}{\bfseries}{}{ }{}
+\theoremstyle{sloganstyle}
+\declaretheorem[name=Slogan,numbered=no]{slogan}
+\tcolorboxenvironment{slogan}{
+  boxrule=0pt,
+  boxsep=0pt,
+  colback={Green!10},
+  left=8pt,
+  right=8pt,
+  enhanced jigsaw,
+  borderline={2pt}{0pt}{Green},
+  sharp corners,
+  before skip=10pt,
+  after skip=10pt,
+  breakable,
+  before upper={\setlength{\parindent}{2em}},
+}
 
 
 
