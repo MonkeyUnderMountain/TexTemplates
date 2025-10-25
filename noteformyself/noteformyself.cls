@@ -187,6 +187,7 @@
 \declaretheorem[sibling=definition,name=Claim]{claim}
 \declaretheorem[sibling=definition,name=Example]{example}
 \declaretheorem[sibling=definition,name=Exercise]{exercise}
+\declaretheorem[sibling=definition,name=Construction]{construction}
 
 % 定义step子环境（在proof环境中使用，每个proof重置计数器）
 \newcounter{step}
@@ -235,6 +236,7 @@
 \crefname{remark}{Remark}{Remarks}
 \crefname{example}{Example}{Examples}
 \crefname{exercise}{Exercise}{Exercises}
+\crefname{construction}{Construction}{Constructions}
 \crefname{proof}{Proof}{Proofs}
 \crefname{claim}{Claim}{Claims}
 \crefname{globalstep}{Step}{Steps} % Global unique step counter
@@ -292,6 +294,7 @@
 \myemptybgtcdsetup{claim}{orange}{}
 \myemptybgtcdsetup{exercise}{teal}{}
 \myemptybgtcdsetup{remark}{olive}{}
+\myemptybgtcdsetup{construction}{blue}{}
 
 
 % 定义slogan环境
