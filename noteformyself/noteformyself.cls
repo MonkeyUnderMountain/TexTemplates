@@ -3,7 +3,7 @@
 % !TeX program = xelatex
 % !Bib program = biber
 % !TEX encoding = UTF-8 Unicode
-\ProvidesClass{noteformyself}[2025/10/25, v 1.1.3, for notes to myself]
+\ProvidesClass{noteformyself}[2025/11/05, v 1.1.4, for notes to myself]
 
 
 % 加载条件判断包（在使用\ifdefstring之前）
@@ -188,6 +188,7 @@
 \declaretheorem[sibling=definition,name=Example]{example}
 \declaretheorem[sibling=definition,name=Exercise]{exercise}
 \declaretheorem[sibling=definition,name=Construction]{construction}
+\declaretheorem[sibling=definition,name=Notation]{notation}
 
 % 定义step子环境（在proof环境中使用，每个proof重置计数器）
 \newcounter{step}
@@ -237,6 +238,7 @@
 \crefname{example}{Example}{Examples}
 \crefname{exercise}{Exercise}{Exercises}
 \crefname{construction}{Construction}{Constructions}
+\crefname{notation}{Notation}{Notations}
 \crefname{proof}{Proof}{Proofs}
 \crefname{claim}{Claim}{Claims}
 \crefname{globalstep}{Step}{Steps} % Global unique step counter
@@ -294,7 +296,8 @@
 \myemptybgtcdsetup{claim}{orange}{}
 \myemptybgtcdsetup{exercise}{teal}{}
 \myemptybgtcdsetup{remark}{olive}{}
-\myemptybgtcdsetup{construction}{blue}{}
+\myemptybgtcdsetup{construction}{Blue}{}
+\myemptybgtcdsetup{notation}{MidnightBlue}{}
 
 
 % 定义slogan环境
