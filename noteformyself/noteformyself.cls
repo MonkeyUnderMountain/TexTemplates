@@ -3,7 +3,7 @@
 % !TeX program = xelatex
 % !Bib program = biber
 % !TEX encoding = UTF-8 Unicode
-\ProvidesClass{noteformyself}[2025/11/05, v 1.1.4, for notes to myself]
+\ProvidesClass{noteformyself}[2026/01/11, v 1.1.5, for notes to myself]
 
 
 % 加载条件判断包（在使用\ifdefstring之前）
@@ -132,6 +132,7 @@
 
 % 引用系统
 \RequirePackage[backend=biber,style=alphabetic,backref]{biblatex} % 参考文献管理
+\ExecuteBibliographyOptions{maxbibnames=99}                       % 显示所有作者
 
 % 交互功能
 \RequirePackage{hyperref}       % 超链接支持
