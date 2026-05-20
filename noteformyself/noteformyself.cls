@@ -3,7 +3,7 @@
 % !TeX program = xelatex
 % !Bib program = biber
 % !TEX encoding = UTF-8 Unicode
-\ProvidesClass{noteformyself}[2026/01/11, v 1.1.5, for notes to myself]
+\ProvidesClass{noteformyself}[2026/05/20, v 1.1.6, for notes to myself]
 
 
 % 加载条件判断包（在使用\ifdefstring之前）
@@ -141,6 +141,7 @@
   linkcolor = blue,             % 跳转到文档内部
   urlcolor = magenta,           % 跳转到外部链接
   citecolor=cyan,               % 参考文献引用
+  hypertexnames=false,          % 禁止重复的锚点名称
 }
 \RequirePackage[nameinlink]{cleveref} % 智能引用（自动添加前缀）
 
@@ -148,6 +149,9 @@
 \RequirePackage{enumitem}       % Required for custom labels
 \setlist[enumerate,1]{label=(\alph*)} % 第一层级：小写字母加括号 (a), (b), ...)
 \setlist[enumerate,2]{label=(\roman*)} % 第二层级：小写罗马数字加括号 (i), (ii), ...)
+
+% allow display as equations breaks across pages
+\allowdisplaybreaks
 
 
 
@@ -190,6 +194,8 @@
 \declaretheorem[sibling=definition,name=Exercise]{exercise}
 \declaretheorem[sibling=definition,name=Construction]{construction}
 \declaretheorem[sibling=definition,name=Notation]{notation}
+\declaretheorem[numbered=yes, name=Theorem]{mainthm} % main theorem with global numbering
+\renewcommand{\themainthm}{\Alph{mainthm}} % Display as A, B, C, ...
 
 % 定义step子环境（在proof环境中使用，每个proof重置计数器）
 \newcounter{step}
@@ -246,6 +252,7 @@
 \crefname{globalcase}{Case}{Cases} % Global unique case counter
 \crefname{section}{Section}{Sections}
 \crefname{subsection}{Subsection}{Subsections}
+\crefname{mainthm}{Theorem}{Theorems}
 
 
 % 定义有背景色的定理环境样式，应用于definition, proposition, theorem, lemma, corollary, conjecture, question
@@ -268,6 +275,7 @@
 \mybackgroundtcbsetup{definition}{blue}{}
 \mybackgroundtcbsetup{proposition}{purple}{}
 \mybackgroundtcbsetup{theorem}{red}{}
+\mybackgroundtcbsetup{mainthm}{red}{}
 \mybackgroundtcbsetup{lemma}{orange}{}
 \mybackgroundtcbsetup{corollary}{magenta}{}
 \mybackgroundtcbsetup{conjecture}{violet}{}

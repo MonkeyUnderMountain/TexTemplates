@@ -39,6 +39,10 @@
         This is a slogan environment, it is used to highlight important slogans or quotes.
     \end{slogan}
 
+    \begin{mainthm}[this is a main theorem]
+        test
+    \end{mainthm}
+
     \begin{definition}[this is a definition]
         A \emph{locally ringed space} is a pair \((X, \calO_X)\), where \(X\) is a topological space, and \(\calO_X\) is a sheaf of rings on \(X\), such that for every point \(x \in X\), the stalk \(\calO_{X,x}\) is a local ring.
     \end{definition}
@@ -102,6 +106,19 @@
             This is another case environment, it is used to break down the proof into smaller cases.
         \end{case}
         And the case environment should be used inside the proof environment.
+        
+        Here may be a long equation that needs to be broken across pages:
+        \begin{align*}
+             & 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9  \\
+            = & 3 + 3 + 4 + 5 + 6 + 7 + 8 + 9  \\
+            = & 6 + 4 + 5 + 6 + 7 + 8 + 9  \\
+            = & 10 + 5 + 6 + 7 + 8 + 9  \\
+            = & 15 + 6 + 7 + 8 + 9  \\
+            = & 21 + 7 + 8 + 9  \\
+            = & 28 + 8 + 9  \\
+            = & 36 + 9  \\
+            = & 45
+        \end{align*}
     \end{proof}
 
     \begin{lemma}[this is a lemma]
