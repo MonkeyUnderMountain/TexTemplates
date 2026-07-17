@@ -1,0 +1,328 @@
+#!/usr/bin/env bash
+# Create and extend LaTeX note repositories stored beside this script.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+GITIGNORE_TEMPLATE="$SCRIPT_DIR/.gitignore"
+ACCESSORIES_URL="git@github.com:MonkeyUnderMountain/Accessories_tex.git"
+
+die() { printf 'Error: %s\n' "$*" >&2; }
+
+require_safe_name() {
+  local name=$1
+  [[ -n $name && $name != .* && $name =~ ^[[:alnum:]_+.-]+$ ]] || {
+    die "Names may use letters, numbers, _, +, -, and . (and may not start with .)."
+    return 1
+  }
+}
+
+note_directories() {
+  local directory
+  while IFS= read -r -d '' directory; do
+    [[ -e "$directory/.git" ]] && printf '%s\0' "$directory"
+  done < <(find "$SCRIPT_DIR" -mindepth 1 -maxdepth 1 -type d -print0)
+}
+
+choose_from() {
+  # Usage: choose_from "prompt" item...
+  local prompt=$1 answer i n=0
+  shift
+  (($# > 0)) || {
+    die "There is nothing to choose from."
+    return 1
+  }
+  printf '\n%s\n' "$prompt" >&2
+  for i in "$@"; do
+    printf '  %d) %s\n' "$((++n))" "$(basename -- "$i")" >&2
+  done
+  while true; do
+    read -r -p 'Choose a number (or q to cancel): ' answer
+    [[ $answer == q || $answer == Q ]] && return 1
+    [[ $answer =~ ^[0-9]+$ ]] && ((answer >= 1 && answer <= $#)) && {
+      printf '%s\n' "${!answer}"
+      return 0
+    }
+    printf 'Please enter a number from 1 to %d, or q.\n' "$#" >&2
+  done
+}
+
+choose_note() {
+  local -a notes=()
+  local note
+  while IFS= read -r -d '' note; do notes+=("$note"); done < <(note_directories)
+  choose_from 'Available notes:' "${notes[@]}"
+}
+
+choose_chapter() {
+  local note=$1 chapter
+  local -a chapters=()
+  [[ -d "$note/chapters" ]] || {
+    die "This note has no chapters directory yet."
+    return 1
+  }
+  while IFS= read -r -d '' chapter; do chapters+=("$chapter"); done \
+    < <(find "$note/chapters" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
+  choose_from 'Available chapters:' "${chapters[@]}"
+}
+
+write_chapter_files() {
+  local parent=$1
+  local name=$2
+  local target="$parent/$name"
+  require_safe_name "$name" || return 1
+  if [[ -e $target ]]; then
+    die "Already exists: $target"
+    return 1
+  fi
+  mkdir -p -- "$target"
+  cat >"$target/$name.tex" <<EOF
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+% !BIB program = biber
+\documentclass[sectionlevel=chapter]{noteformyself}
+\usepackage{draftwatermark} % Watermark package
+
+\input{../../accessories/notation.tex}
+\addbibresource{../../accessories/ref.bib}
+\newcommand{\Yang}[1]{\textcolor{red}{Yang: #1}}
+
+
+\title{$name}
+\author{Tianle Yang}
+\date{\today}
+\authorpage{\href{www.example.com}{My Homepage}}
+
+% Available with "\sectionlevel=chapter" or "\sectionlevel=book".
+% LXGW WenKai font; remove or replace this line if the font is unavailable.
+\setCJKfamilyfont{lxgwwenkai}{LXGW WenKai}
+\coversentence{\CJKfamily{lxgwwenkai} A slogan you like}
+\coverimage{} % Cover image
+\covertitlefont{Times New Roman} % Cover title font; remove or replace if unavailable.
+% \coverlinecolor{red} % Cover line color
+% \covertextcolor{green} % Cover text color
+
+
+\begin{document}
+
+    \maketitle
+
+    \tableofcontents
+
+    \printbibliography[heading=bibintoc, title={References}]
+    
+\end{document}
+EOF
+  cat >"$target/appendix.tex" <<'EOF'
+\section{Appendix}
+EOF
+  printf 'Created %s\n' "$target"
+}
+
+write_section_files() {
+  local chapter=$1
+  local name=$2
+  local target="$chapter/$name"
+  require_safe_name "$name" || return 1
+  if [[ -e $target ]]; then
+    die "Already exists: $target"
+    return 1
+  fi
+  mkdir -p -- "$target"
+  cat >"$target/$name.tex" <<EOF
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+% !BIB program = biber
+\documentclass{noteformyself}
+\usepackage{draftwatermark} % Watermark package
+
+\newcommand{\Yang}[1]{\textcolor{red}{Yang: #1}}
+\input{../../../accessories/notation.tex}
+\addbibresource{../../../accessories/ref.bib}
+
+
+\title{$name}
+\author{Tianle Yang}
+\date{\today}
+\authorpage{\href{https://www.tianleyang.com}{My Homepage}}
+
+
+\begin{document}
+
+\maketitle
+
+\input{text.tex}
+
+% \input{appendix.tex}
+
+% \printbibliography[heading=bibintoc, title={References}]
+
+\end{document}
+EOF
+  cat >"$target/text.tex" <<EOF
+% !TeX root = $name.tex
+\section{$name}
+EOF
+  cat >"$target/appendix.tex" <<'EOF'
+\section{Appendix}
+EOF
+  printf 'Created %s\n' "$target"
+}
+
+write_note_root_file() {
+  local note=$1
+  local name=$2
+  cat >"$note/$name.tex" <<EOF
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+% !BIB program = biber
+\documentclass[sectionlevel=book]{noteformyself}
+\usepackage{draftwatermark}
+
+\input{accessories/notation.tex}
+\addbibresource{accessories/ref.bib}
+\newcommand{\Yang}[1]{\textcolor{red}{#1}}
+
+
+\title{Notes in Algebraic Geometry}
+\author{Tianle Yang}
+\date{\today}
+\authoremail{\href{mailto:loveandjustice@88.com}{loveandjustice@88.com}}
+\authorpage{\href{https://www.tianleyang.com}{www.tianleyang.com}}
+\texsource{\href{https://github.com/MonkeyUnderMountain/$name}{github.com/MonkeyUnderMountain/$name}}
+\version{0.1.0}
+
+% LXGW WenKai font; remove or replace this line if the font is unavailable.
+\setCJKfamilyfont{lxgwwenkai}{LXGW WenKai}
+\coversentence{\CJKfamily{lxgwwenkai} a slogan you like}
+\coverimage{} % Cover image
+\coverlinecolor{brown!80!yellow} % Cover line color
+\covertitlefont{Allura} % Cover title font; remove or replace if unavailable.
+\covertextcolor{red!80!black} % Cover title color
+
+
+\begin{document}
+
+    % \pagestyle{empty}
+    \maketitle
+
+    \frontmatter
+
+    \tableofcontents
+
+    \mainmatter
+
+    % \appendix
+
+
+    \printbibliography[heading=bibintoc, title={References}]
+
+\end{document}
+EOF
+  printf 'Created %s\n' "$note/$name.tex"
+}
+
+review_and_commit_note_setup() {
+  local note=$1 name=$2 answer
+  printf '\nInitial note setup changes:\n'
+  git -C "$note" status --short
+  if read -r -p 'Commit these setup files now? [y/N] ' answer && [[ $answer =~ ^[Yy]([Ee][Ss])?$ ]]; then
+    git -C "$note" add -- .gitignore .gitmodules accessories "$name.tex"
+    if git -C "$note" commit -m 'Set up note structure'; then
+      printf 'Initial note setup committed.\n'
+    else
+      die 'The files were staged, but the commit failed (for example, Git user.name or user.email may be unset).'
+    fi
+  fi
+}
+
+ask_name() {
+  local label=$1 name
+  while true; do
+    read -r -p "Name of the new $label (or q to cancel): " name
+    [[ $name == q || $name == Q ]] && return 1
+    require_safe_name "$name" && {
+      printf '%s\n' "$name"
+      return 0
+    }
+  done
+}
+
+create_section_in() {
+  local chapter=$1 name
+  printf '\nExisting sections:\n'
+  find "$chapter" -mindepth 1 -maxdepth 1 -type d -printf '  %f\n' | sort || true
+  name=$(ask_name section) || return 0
+  write_section_files "$chapter" "$name"
+}
+
+create_chapter_in() {
+  local note=$1 name chapter
+  mkdir -p -- "$note/chapters"
+  printf '\nExisting chapters:\n'
+  find "$note/chapters" -mindepth 1 -maxdepth 1 -type d -printf '  %f\n' | sort || true
+  name=$(ask_name chapter) || return 0
+  write_chapter_files "$note/chapters" "$name"
+  chapter="$note/chapters/$name"
+  if read -r -p 'Create a section in this new chapter? [y/N] ' answer && [[ $answer =~ ^[Yy]([Ee][Ss])?$ ]]; then
+    create_section_in "$chapter"
+  fi
+}
+
+create_note() {
+  local url repo_name destination answer
+  read -r -p 'Git repository URL (or q to cancel): ' url
+  [[ $url == q || $url == Q ]] && return 0
+  repo_name=${url%/}
+  repo_name=${repo_name##*/}
+  repo_name=${repo_name%.git}
+  require_safe_name "$repo_name" || {
+    die "Could not derive a safe directory name from that URL."
+    return 1
+  }
+  destination="$SCRIPT_DIR/$repo_name"
+  [[ ! -e $destination ]] || {
+    die "Destination already exists: $destination"
+    return 1
+  }
+  [[ -f $GITIGNORE_TEMPLATE ]] || {
+    die "Missing template: $GITIGNORE_TEMPLATE"
+    return 1
+  }
+
+  git clone -- "$url" "$destination"
+  mkdir -p -- "$destination/chapters"
+  write_note_root_file "$destination" "$repo_name"
+  cp -- "$GITIGNORE_TEMPLATE" "$destination/.gitignore"
+  # Git controls ignore-pattern case matching with this repository setting.
+  git -C "$destination" config core.ignorecase false
+  git -C "$destination" submodule add -- "$ACCESSORIES_URL" accessories
+  review_and_commit_note_setup "$destination" "$repo_name"
+  printf 'Created note %s\n' "$destination"
+  if read -r -p 'Create a chapter in this new note? [y/N] ' answer && [[ $answer =~ ^[Yy]([Ee][Ss])?$ ]]; then
+    create_chapter_in "$destination"
+  fi
+}
+
+main() {
+  local choice note chapter answer
+  while true; do
+    printf '\nWhat would you like to create?\n  1) A note repository\n  2) A chapter in a note\n  3) A section in a chapter\n  q) Quit\n'
+    read -r -p 'Choose an option: ' choice
+    case $choice in
+    1) create_note ;;
+    2) note=$(choose_note) && create_chapter_in "$note" ;;
+    3)
+      note=$(choose_note) || continue
+      chapter=$(choose_chapter "$note") || continue
+      create_section_in "$chapter"
+      ;;
+    q | Q) exit 0 ;;
+    *) printf 'Please choose 1, 2, 3, or q.\n' >&2 ;;
+    esac
+    read -r -p 'Create something else? [Y/n] ' answer || exit 0
+    [[ $answer =~ ^[Nn]([Oo])?$ ]] && exit 0
+  done
+}
+
+main "$@"
